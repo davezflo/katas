@@ -19,14 +19,14 @@ NODE ll_create(char *data)
     node->next = NULL;
     node->prev = NULL;
     memset(node->data, buffer_size, 0);
-    strncpy(node->data, data, strlen(data)<buffer_size?strlen(data):buffer_size); 
+    strcpy(node->data, data);
     return node;
 }
 
 /* There are 6 pointers to consider
    CurrentNode -> Next must point to new node
    CurrentNode -> Prev is unchanged
-   NewNode -> Next is unchanged
+   NewNode -> Next must point to originalNextNode
    NewNode -> Prev points to CurrentNode
    OriginalNextNode -> Next is unchanged
    OriginalNextNode -> Prev points to NewNode
@@ -42,6 +42,7 @@ void ll_insert(NODE current_node, char *data)
         original_next_node->prev = newNode;
     
     newNode->prev = current_node;
+    newNode->next = original_next_node;
 }
 
 /* There are 6 pointers to consider
@@ -88,8 +89,7 @@ void ll_data(NODE current, char *buffer, int length)
 {
     memset(buffer, length, 0);
     if(current) {
-        int copy_length = length<strlen(((Node *)current)->data)?length:strlen(((Node *)current)->data);
-        strncpy(buffer, ((Node *)current)->data, copy_length);
+        strcpy(buffer, ((Node *)current)->data);
     }
 }
 
@@ -98,7 +98,7 @@ void ll_set_data(NODE current, char *data)
     if(current) {
         Node *node = (Node *)current;
         memset(node->data, buffer_size, 0);
-        strncpy(node->data, data, strlen(data)<buffer_size?strlen(data):buffer_size); 
+        strcpy(node->data, data); 
     }
 }
     
@@ -145,10 +145,9 @@ int main()
             }
         }
         else if(strncmp(buffer, "insert", strlen("insert")) == 0) {
-            strcpy(input, ((char *)buffer)+strlen("insert "));
-            if(current) {
+            scanf("%s", input);
+            if(current) 
                 ll_insert(current, input);
-            }
             else {
                 head = ll_create(input);
                 current = head;
@@ -160,7 +159,7 @@ int main()
             }
         }
         else if(strncmp(buffer, "set", strlen("set")) == 0) {
-            strcpy(input, ((char *)buffer)+strlen("insert "));
+            scanf("%s", input);
             if(current) {
                 ll_set_data(current, input);
             }
@@ -174,19 +173,19 @@ int main()
         else if(strncmp(buffer, "next", strlen("next")) == 0) {
             if(current) {
                 NODE next = ll_next(current);
-                if(next) {
+                if(next)
                     current = next;
+                else
                     printf("at end.\n");
-                }    
             }
         }
         else if(strncmp(buffer, "prev", strlen("prev")) == 0) {
             if(current) {
                 NODE prev = ll_prev(current);
-                if(prev) {
+                if(prev) 
                     current = prev;
+                else
                     printf("at beginning.\n");
-                }  
             }
         }
         else if(strncmp(buffer, "quit", strlen("quit")) == 0) {
