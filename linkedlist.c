@@ -23,14 +23,6 @@ NODE ll_create(char *data)
     return node;
 }
 
-/* There are 6 pointers to consider
-   CurrentNode -> Next must point to new node
-   CurrentNode -> Prev is unchanged
-   NewNode -> Next must point to originalNextNode
-   NewNode -> Prev points to CurrentNode
-   OriginalNextNode -> Next is unchanged
-   OriginalNextNode -> Prev points to NewNode
-*/
 void ll_insert(NODE current_node, char *data)
 {
     Node * newNode = (Node *)ll_create(data);
@@ -45,14 +37,6 @@ void ll_insert(NODE current_node, char *data)
     newNode->next = original_next_node;
 }
 
-/* There are 6 pointers to consider
-   CurrentNode -> Next must point to new node
-   CurrentNode -> Prev is unchanged
-   NewNode -> Next is unchanged
-   NewNode -> Prev points to CurrentNode
-   OriginalNextNode -> Next is unchanged
-   OriginalNextNode -> Prev points to NewNode
-*/
 NODE ll_remove(NODE current_node)
 {
     NODE returnvalue = NULL;
@@ -155,7 +139,12 @@ int main()
         }
         else if(strncmp(buffer, "remove", strlen("remove")) == 0) {
             if(current) {
+                int resethead = 0;
+                if(current == head)
+                    resethead = 1;
                 current = ll_remove(current);
+                if(resethead)
+                    head = current;
             }
         }
         else if(strncmp(buffer, "set", strlen("set")) == 0) {
